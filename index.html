@@ -37,7 +37,15 @@
         device-orientation-permission-ui="enabled: false"
       >
         <a-assets>
-          <video id="catVideo" src="mp4/Catloop.mp4" preload="auto" loop muted crossorigin="anonymous"></video>
+          <video
+            id="catVideo"
+            src="mp4/Catloop.mp4"
+            preload="auto"
+            loop
+            muted
+            crossorigin="anonymous"
+            playsinline
+          ></video>
         </a-assets>
 
         <a-camera
@@ -47,7 +55,7 @@
           cursor="fuse: false; rayOrigin: mouse;"
         ></a-camera>
 
-        <!-- 🎯 AR Target Logic -->
+        <!-- Display video on target scan -->
         <a-entity mindar-image-target="targetIndex: 0">
           <a-video
             src="#catVideo"
@@ -57,27 +65,33 @@
             autoplay
             loop
             muted
+            playsinline
           ></a-video>
         </a-entity>
       </a-scene>
     </div>
 
-    <!-- Invisible click overlay -->
+    <!-- Click layer -->
     <div id="tap-catcher"></div>
 
-    <!-- Redirect logic on AR target detection -->
+    <!-- Target detection + click redirect -->
     <script>
       const target = document.querySelector("[mindar-image-target]");
       const tapCatcher = document.getElementById("tap-catcher");
+      const video = document.getElementById("catVideo");
 
       target.addEventListener("targetFound", () => {
-        console.log("✅ Target Found — Tap to visit");
+        console.log("✅ Target Found — show link + play video");
         tapCatcher.style.display = "block";
+        video.play().catch((err) => {
+          console.warn("⛔ Video play blocked:", err);
+        });
       });
 
       target.addEventListener("targetLost", () => {
-        console.log("❌ Target Lost — Hide tap area");
+        console.log("❌ Target Lost — pause video");
         tapCatcher.style.display = "none";
+        video.pause();
       });
 
       tapCatcher.addEventListener("click", () => {
