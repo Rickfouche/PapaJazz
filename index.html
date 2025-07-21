@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Neon AR Business Card</title>
+    <title>Neon AR Cat Loop</title>
     <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
@@ -11,9 +11,9 @@
         overflow: hidden;
       }
       .ar-scene-container {
-        position: relative;
         width: 100vw;
         height: 100vh;
+        position: relative;
       }
       #tap-catcher {
         position: fixed;
@@ -30,15 +30,14 @@
   <body>
     <div class="ar-scene-container">
       <a-scene
-        mindar-image="imageTargetSrc: https://rickfouche.github.io/NeonAR1/targets/NDCard.mind;"
+        mindar-image="imageTargetSrc: https://rickfouche.github.io/PapaJazz/targets/JazzCat.mind;"
         color-space="sRGB"
         renderer="colorManagement: true, physicallyCorrectLights"
         vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false"
       >
         <a-assets>
-          <img id="businessCardImage" src="https://rickfouche.github.io/NeonAR1/png/Business%20Card4.png" />
-          <a-asset-item id="portalModel" src="https://rickfouche.github.io/NeonAR1/model/Portal.glb"></a-asset-item>
+          <video id="catVideo" src="mp4/Catloop.mp4" preload="auto" loop muted crossorigin="anonymous"></video>
         </a-assets>
 
         <a-camera
@@ -48,41 +47,36 @@
           cursor="fuse: false; rayOrigin: mouse;"
         ></a-camera>
 
+        <!-- 🎯 AR Target Logic -->
         <a-entity mindar-image-target="targetIndex: 0">
-          <a-plane
-            src="#businessCardImage"
+          <a-video
+            src="#catVideo"
+            width="1.5"
+            height="1"
             position="0 0 0"
-            height="0.552"
-            width="1"
-            rotation="0 0 90"
-            material="shader: flat; transparent: true; opacity: 1; emissive: #00ffff; emissiveIntensity: 1"
-          ></a-plane>
-
-          <a-entity position="0 0 0.1" scale="0.3 0.3 0.3" rotation="0 0 0">
-            <a-gltf-model
-              src="#portalModel"
-              animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"
-            ></a-gltf-model>
-          </a-entity>
+            autoplay
+            loop
+            muted
+          ></a-video>
         </a-entity>
       </a-scene>
     </div>
 
-    <!-- ✅ Invisible full-screen click layer -->
+    <!-- Invisible click overlay -->
     <div id="tap-catcher"></div>
 
-    <!-- ✅ Fullscreen redirect logic -->
+    <!-- Redirect logic on AR target detection -->
     <script>
       const target = document.querySelector("[mindar-image-target]");
       const tapCatcher = document.getElementById("tap-catcher");
 
       target.addEventListener("targetFound", () => {
-        console.log("✅ AR Target Found — enabling full-screen redirect zone");
+        console.log("✅ Target Found — Tap to visit");
         tapCatcher.style.display = "block";
       });
 
       target.addEventListener("targetLost", () => {
-        console.log("❌ AR Target Lost — disabling full-screen redirect zone");
+        console.log("❌ Target Lost — Hide tap area");
         tapCatcher.style.display = "none";
       });
 
