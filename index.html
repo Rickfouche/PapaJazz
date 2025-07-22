@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Neon AR Cat Loop</title>
+
     <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
     <style>
       body {
         margin: 0;
         overflow: hidden;
       }
+
       .ar-scene-container {
         width: 100vw;
         height: 100vh;
         position: relative;
       }
+
       #tap-catcher {
         position: fixed;
         top: 0;
@@ -24,10 +28,33 @@
         z-index: 999;
         display: none;
       }
+
+      #loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-family: sans-serif;
+        font-size: 1.2rem;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
     </style>
   </head>
 
   <body>
+    <!-- 🔮 Front Loader -->
+    <div id="loader">
+      <div id="loader-text">🔮 Loading AR Experience...</div>
+    </div>
+
+    <!-- AR Experience -->
     <div class="ar-scene-container">
       <a-scene
         mindar-image="imageTargetSrc: https://rickfouche.github.io/PapaJazz/targets/JazzCat.mind;"
@@ -71,11 +98,27 @@
       </a-scene>
     </div>
 
-    <!-- Click layer -->
+    <!-- Click redirect layer -->
     <div id="tap-catcher"></div>
 
-    <!-- Target detection + click redirect -->
+    <!-- Logic for loader + interactivity -->
     <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const scene = document.querySelector("a-scene");
+        const loader = document.getElementById("loader");
+
+        const hideLoader = () => {
+          loader.style.opacity = "0";
+          setTimeout(() => loader.style.display = "none", 500);
+        };
+
+        if (scene.hasLoaded) {
+          hideLoader();
+        } else {
+          scene.addEventListener("loaded", hideLoader);
+        }
+      });
+
       const target = document.querySelector("[mindar-image-target]");
       const tapCatcher = document.getElementById("tap-catcher");
       const video = document.getElementById("catVideo");
@@ -100,6 +143,7 @@
     </script>
   </body>
 </html>
+
 
 
 
